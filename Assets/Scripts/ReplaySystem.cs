@@ -4,27 +4,57 @@ using UnityEngine;
 
 public class ReplaySystem : MonoBehaviour {
 
+
+	private const int bufferFrames = 1000;
+	private MyKeyFrame[] keyframes = new MyKeyFrame[bufferFrames];
+	private Rigidbody myrigidbody;
+	private GameManager manager;
+
 	// Use this for initialization
 	void Start () {
-		
+		myrigidbody = GetComponent<Rigidbody> ();
+		manager = GameObject.FindObjectOfType<GameManager> ();
 	}
-	
-	// Update is called once per frame
+		
 	void Update () {
-		
+		if (manager.recording) {
+			Record ();
+		} else {
+			PlayBack ();
+		}
 	}
-}
 
-public struct MyKeyFrame {
+	void PlayBack() {
+		myrigidbody.isKinematic = true;
+		int frame = Time.frameCount % bufferFrames;
+		Debug.Log ("Reading frame" + frame);
+		transform.position = keyframes [frame].position;
+		transform.rotation = keyframes [frame].rotation;
+	}
+
+	void Record ()
+	{
+		myrigidbody.isKinematic = false;
+		int frame = Time.frameCount % bufferFrames;
+		float time = Time.time;
+		Debug.Log ("Writing frame" + frame);
+		keyframes [frame] = new MyKeyFrame (time, transform.position, transform.rotation);
+	}
+
+}
+/// <summary>
+/// A structure for storing time,rotation and position
+/// </summary>
+public class MyKeyFrame {
 
 	public float frameTime;
 	public Vector3 position;
 	public Quaternion rotation;
 
-	MyKeyFrame(float aTime, Vector3 aPosition, Quaternion aRotation) {
-		frameTime = aTime;
-		position = aPosition;
-		rotation = aRotation;
+	public MyKeyFrame (float _Time, Vector3 _position, Quaternion _rotation) {
+		_Time = frameTime;
+		_position = position;
+		_rotation = rotation;
 	}
 
 }
