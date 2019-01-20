@@ -24,16 +24,15 @@ public class ReplaySystem : MonoBehaviour {
 		}
 	}
 
+
 	void PlayBack() {
-		myrigidbody.isKinematic = true;
 		int frame = Time.frameCount % bufferFrames;
-		transform.position = keyframes [frame].position;
+        transform.position = keyframes[frame].position;
 		transform.rotation = keyframes [frame].rotation;
 	}
 
 	void Record ()
 	{
-		myrigidbody.isKinematic = false;
 		int frame = Time.frameCount % bufferFrames;
 		float time = Time.time;
 		keyframes [frame] = new MyKeyFrame (time, transform.position, transform.rotation);
